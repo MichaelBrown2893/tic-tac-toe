@@ -44,13 +44,13 @@ class ConsoleView:
         for line in lines:
             self.add_line(line)
 
-    def clear(self):
+    @staticmethod
+    def clear():
         """Clears the console of all text"""
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    @functools.singledispatch
-    @typechecked
-    def set_output(self, output: list[str]):
+    @typechecked()
+    def set_output_from_list(self, output: list[str]):
         """Set the console output to the content provided
 
         Parameters
@@ -66,9 +66,8 @@ class ConsoleView:
         self.clear()
         self.add_lines(output)
 
-    @set_output.register(str)
     @typechecked
-    def set_output(self, output):
+    def set_output(self, output: str):
         """Set the console output to the content provided
 
         Parameters
