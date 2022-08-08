@@ -1,5 +1,5 @@
 import art
-from console_app_tools.model_view_presenter import console_view
+from console_app_tools.model_view_presenter import *
 
 INSTRUCTIONS = """
 Welcome to tic_tac_toe!
@@ -11,9 +11,10 @@ Get three in a row to win!
 """
 
 def app():
-    view = console_view.ConsoleView
-    print(art.TITLE)
-    print(INSTRUCTIONS)
+    model = ConsoleModel()
+    presenter = ConsolePresenter(model)
+    model.add_line(art.TITLE)
+    model.add_line(INSTRUCTIONS)
 
 if __name__ == "__main__":
     app()
