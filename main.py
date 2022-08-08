@@ -1,20 +1,11 @@
-import art
-from console_app_tools.model_view_presenter import *
+from tic_tac_toe import *
+from console_app_tools import user_input
 
-INSTRUCTIONS = """
-Welcome to tic_tac_toe!
+def tic_tac_toe():
+    game = GameModel()
 
-Take it in turns to enter the row and column to identify 
-the square in which you would like to place an x or an o.
+    game.place_symbol(user_input.get_input_of_type(input_type=int, prompt="Enter a number: "), "x")
 
-Get three in a row to win!
-"""
-
-def app():
-    model = ConsoleModel()
-    presenter = ConsolePresenter(model)
-    model.add_line(art.TITLE)
-    model.add_line(INSTRUCTIONS)
 
 if __name__ == "__main__":
-    app()
+    tic_tac_toe()
