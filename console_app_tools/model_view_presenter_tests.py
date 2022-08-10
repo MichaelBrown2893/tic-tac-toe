@@ -166,6 +166,5 @@ class ConsoleViewTests(unittest.TestCase):
         type_check_doesnt_raise(self, view.set_output_from_list, value)
 
 
-if __name__ == "__main__":
-    if __name__ == '__main__':
-        unittest.main()
+if __name__ == '__main__':
+    unittest.main()

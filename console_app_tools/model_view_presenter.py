@@ -233,7 +233,7 @@ class ConsoleModel(Subject):
         self.content = self.content + f"\n{line}"
 
     @typechecked
-    def add_lines(self, lines: list[str]) -> None:
+    def add_lines(self, lines: list[str]):
         """Adds a list of lines to the output
 
         Parameters

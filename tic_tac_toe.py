@@ -41,7 +41,11 @@ Get three in a row to win!
         if symbol.upper() not in self.GAME_SYMBOLS:
             raise ValueError(
                 f"Symbol {symbol} is not valid for tic-tac-toe. Use one of the following: {self.GAME_SYMBOLS}")
-        self.game_board[cell] = symbol
+        if not (1 <= cell <= 9):
+            raise ValueError(
+                f"Number {cell} is not a valid cell. Enter a number between 1 - 9."
+            )
+        self.game_board[cell-1] = symbol
         self._update_content()
 
     def _update_content(self):
