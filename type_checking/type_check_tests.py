@@ -11,7 +11,7 @@ def type_check_doesnt_raise(test_class: unittest.TestCase, func: Callable, *args
         test_class.fail(f"{func.__name__} raised {type(err)}: {err}")
 
 
-def type_check_raises(test_class: unittest.TestCase, func: Callable, *args, error_type: BaseException = Exception,
-                      **kwargs):
+def type_check_raises(test_class: unittest.TestCase, func: Callable, *args: object, error_type: BaseException = Exception,
+                      **kwargs: object) -> object:
     with test_class.assertRaises(error_type):
         func(args[0])

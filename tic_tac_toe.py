@@ -1,8 +1,8 @@
-import sys
+import copy
 from dataclasses import dataclass
 from typeguard import typechecked
 from console_app_tools.model_view_presenter import ConsolePresenter, ConsoleModel
-from console_app_tools.user_input import get_input_of_type, get_input
+from console_app_tools.user_input import get_input_of_type_forced, get_input, get_input_of_type, get_input_new
 from observer_pattern.observer_pattern import Subject, Observer
 
 
@@ -15,12 +15,9 @@ class GameBoard(Subject):
 
     _HORIZONTAL_LINE: str = "-----------"
 
-    _game_board: list[list[str]] = _BLANK_GAME_BOARD
-    _observers: list = []
-
     def __init__(self):
         self._observers = []
-        self._game_board = self._BLANK_GAME_BOARD
+        self._game_board = copy.deepcopy(self._BLANK_GAME_BOARD)
 
     def __str__(self) -> str:
         return "\n".join([f" {self._game_board[0][0]} | {self._game_board[0][1]} | {self._game_board[0][2]}",
@@ -70,7 +67,7 @@ class GameBoard(Subject):
 
     @staticmethod
     def _cell_number_to_2d(cell_number: int) -> (int, int):
-        return (cell_number-1) // 3, ((cell_number-1) % 3)
+        return (cell_number - 1) // 3, ((cell_number - 1) % 3)
 
     def place_symbol(self, cell: int, symbol: str) -> None:
         if symbol.upper() not in self.GAME_SYMBOLS:
@@ -111,19 +108,27 @@ class GameBoard(Subject):
 
     def _check_diagonals(self) -> bool:
         if len(set(
-            [self._game_board[i][i] for i in range(3)]
+                [self._game_board[i][i] for i in range(3)]
         )) == 1:
             return True
 
         if len(set(
-            [self._game_board[i][2 - i] for i in range(3)]
+                [self._game_board[i][2 - i] for i in range(3)]
         )) == 1:
             return True
 
         return False
 
-    def game_over(self) -> bool:
+    def game_won(self) -> bool:
         return self._check_diagonals() or self._check_cols() or self._check_rows()
+
+    def game_draw(self) -> bool:
+        for row in self._game_board:
+            for item in row:
+                if item.isnumeric():
+                    return False
+
+        return True
 
 
 class GameConsoleModel(ConsoleModel, Observer):
@@ -153,15 +158,8 @@ Get three in a row to win!
         self.add_lines([
             self.TITLE,
             self.INSTRUCTIONS,
-            subject.__str__()
-        ])
-        self.notify()
-
-    def welcome(self) -> None:
-        self.clear_content()
-        self.add_lines([
-            self.TITLE,
-            self.INSTRUCTIONS
+            subject.__str__(),
+            ""
         ])
         self.notify()
 
@@ -186,15 +184,12 @@ class TurnTracker:
 
 
 class TicTacToe:
-    _board: GameBoard
-    _model: GameConsoleModel
-    _players: list[Player] = []
-
     def __init__(self) -> None:
         self._board = GameBoard()
         self._model = GameConsoleModel()
         self._board.attach(self._model)
         self._model.update(self._board)
+        self._players = []
         self._players.append(Player(1, self._board.GAME_SYMBOLS[0]))
         self._players.append(Player(2, self._board.GAME_SYMBOLS[1]))
 
@@ -204,21 +199,30 @@ class TicTacToe:
 
     def _take_turn(self, player: Player) -> None:
         try:
-            self._board.place_symbol(get_input_of_type(int, self._input_prompt(player)), player.symbol)
+            self._board.place_symbol(get_input_new(prompt=self._input_prompt(player), return_type=int), player.symbol)
         except ValueError as err:
             print(err)
             self._take_turn(player)
 
-    def _game_over(self, winner: Player):
+    @staticmethod
+    def _game_won(winner: Player):
         print(f"Player {winner.player_number} won with 3 in a row!")
+
+    @staticmethod
+    def _game_draw():
+        print(f"Game concluded as a draw. Neither player got 3 in a row.")
 
     def play_game(self):
         turn_tracker = TurnTracker()
 
         while True:
             self._take_turn(self._players[turn_tracker.players_turn - 1])
-            if self._board.game_over():
+            if self._board.game_won():
+                self._game_won(self._players[turn_tracker.players_turn - 1])
+                break
+            if self._board.game_draw():
+                self._game_draw()
                 break
             turn_tracker.next_turn()
 
-        self._game_over(self._players[turn_tracker.players_turn -1])
+

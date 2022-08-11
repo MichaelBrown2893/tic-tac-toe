@@ -206,7 +206,12 @@ class ConsoleModel(Subject):
 
     @property
     def content(self) -> str:
-        """Getter for output property"""
+        """Getter for output property
+
+        Returns
+        -------
+            output
+        """
         return self._content
 
     @content.setter

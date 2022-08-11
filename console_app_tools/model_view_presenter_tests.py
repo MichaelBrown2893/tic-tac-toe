@@ -7,7 +7,7 @@ from model_view_presenter import *
 
 class ConsoleModelTests(unittest.TestCase):
 
-    # content tests
+    # region content tests
     @parameterized.expand([
         [1], [1.0], [-4],
         [["", "", ""]], [(1, 2, 3)], [{"type": "dictionary"}],
@@ -38,7 +38,9 @@ class ConsoleModelTests(unittest.TestCase):
         model.content = expected_result
         self.assertEqual(expected_result, model.content)
 
-    # add_line tests
+    # endregion
+
+    # region add_line tests
     @parameterized.expand([
         [1], [1.0], [-4],
         [["", "", ""]], [(1, 2, 3)], [{"type": "dictionary"}],
@@ -62,7 +64,9 @@ class ConsoleModelTests(unittest.TestCase):
         model.add_line(line)
         self.assertEqual(model.content, f"{initial_value}\n{line}")
 
-    # add_lines tests
+    # endregion
+
+    # region add_lines tests
     @parameterized.expand([
         [1], [1.0], [-4],
         ["Test String"], [(1, 2, 3)], [{"type": "dictionary"}],
@@ -86,7 +90,9 @@ class ConsoleModelTests(unittest.TestCase):
         model.add_lines(lines)
         self.assertEqual(initial_value + "\n" + "\n".join(lines), model.content)
 
-    # clear_content tests
+    # endregion
+
+    # region clear_content tests
     @parameterized.expand([
         [""],
         ["initial content"],
@@ -98,10 +104,12 @@ class ConsoleModelTests(unittest.TestCase):
         model.clear_content()
         self.assertEqual(expected_case, model.content)
 
+    # endregion
+
 
 class ConsoleViewTests(unittest.TestCase):
 
-    # add_line tests
+    # region add_line tests
     @parameterized.expand([
         [1], [1.0], [-4],
         [["", "", ""]], [(1, 2, 3)], [{"type": "dictionary"}],
@@ -116,7 +124,9 @@ class ConsoleViewTests(unittest.TestCase):
         view = ConsoleView()
         type_check_doesnt_raise(self, view.add_line, value)
 
-    # add_lines tests
+    # endregion
+
+    # region add_lines tests
     @parameterized.expand([
         [1], [1.0], [-4],
         ["Test String"], [(1, 2, 3)], [{"type": "dictionary"}],
@@ -130,8 +140,9 @@ class ConsoleViewTests(unittest.TestCase):
     def test_add_lines_correct_type_does_not_raise(self, value: list[str]):
         view = ConsoleView()
         type_check_doesnt_raise(self, view.add_lines, value)
+    # endregion
 
-    # set_output tests
+    # region set_output tests
     @parameterized.expand([
         [1], [1.0], [-4],
         [(1, 2, 3)], [{"type": "dictionary"}], [["Test string 1", "Test string 2"]],
@@ -147,8 +158,9 @@ class ConsoleViewTests(unittest.TestCase):
     def test_set_output_correct_type_does_not_raise(self, value: list[str]):
         view = ConsoleView()
         type_check_doesnt_raise(self, view.set_output, value)
+    # endregion
 
-    # set_output_from_list tests
+    # region set_output_from_list tests
     @parameterized.expand([
         [1], [1.0], [-4],
         [(1, 2, 3)], [{"type": "dictionary"}], ["Test string 1"],
@@ -164,6 +176,8 @@ class ConsoleViewTests(unittest.TestCase):
     def test_set_output_from_list_correct_type_does_not_raise(self, value: list[str]):
         view = ConsoleView()
         type_check_doesnt_raise(self, view.set_output_from_list, value)
+
+    # endregion
 
 
 if __name__ == '__main__':
