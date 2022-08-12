@@ -83,14 +83,15 @@ class ConsoleView:
 
 
 class ConsolePresenter(Observer):
-    def __init__(self, view: ConsoleView = ConsoleView()):
+    def __init__(self, view: ConsoleView = ConsoleView()) -> None:
         self._view = view
 
     def update(self, subject: ConsoleModel) -> None:
         """Updates the output when the model state has changed"""
         self.set_output(subject.content)
 
-    def add_line(self, line: str):
+    @typechecked()
+    def add_line(self, line: str) -> None:
         """Adds the provided line to the console output
 
         Parameters
@@ -105,7 +106,8 @@ class ConsolePresenter(Observer):
         """
         self._view.add_line(line)
 
-    def add_lines(self, lines: list[str]):
+    @typechecked()
+    def add_lines(self, lines: list[str]) -> None:
         """Adds multiple lines to the console output
 
         Parameters
@@ -120,7 +122,8 @@ class ConsolePresenter(Observer):
         """
         self._view.add_lines(lines)
 
-    def set_output(self, line: str):
+    @typechecked()
+    def set_output(self, line: str) -> None:
         """Set the console output to the content provided
 
         Parameters
@@ -135,7 +138,8 @@ class ConsolePresenter(Observer):
         """
         self._view.set_output(line)
 
-    def set_output_from_list(self, lines: list[str]):
+    @typechecked()
+    def set_output_from_list(self, lines: list[str]) -> None:
         """Set the console output to the content provided
 
         Parameters
@@ -150,7 +154,7 @@ class ConsolePresenter(Observer):
         """
         self._view.set_output_from_list(lines)
 
-    def clear(self):
+    def clear(self) -> None:
         """Clears the console of all text"""
         self._view.clear()
 
@@ -161,7 +165,7 @@ class ConsoleModel(Subject):
     _content = ""
     _observers = []
 
-    def __init__(self, observer: Observer = ConsolePresenter(), content: str = "") -> None:
+    def __init__(self, content: str = "", observer: Observer = ConsolePresenter()) -> None:
         self.attach(observer)
         self._content = content
 
@@ -216,7 +220,18 @@ class ConsoleModel(Subject):
 
     @content.setter
     def content(self, value: str) -> None:
-        """Setter for output property"""
+        """Setter for output property
+
+        Parameters
+        ----------
+        value
+            The value to set content to
+
+        Raises
+        ------
+        TypeError
+            Attempt to set content to a non str value
+        """
         if not isinstance(value, str):
             raise TypeError(f"Type {type(value)} given to setter for property: str content")
         self._content = value
@@ -238,7 +253,7 @@ class ConsoleModel(Subject):
         self.content = self.content + f"\n{line}"
 
     @typechecked
-    def add_lines(self, lines: list[str]):
+    def add_lines(self, lines: list[str]) -> None:
         """Adds a list of lines to the output
 
         Parameters

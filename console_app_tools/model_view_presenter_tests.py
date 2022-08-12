@@ -85,7 +85,7 @@ class ConsoleModelTests(unittest.TestCase):
         ["", ["line1", "line2", "line3"]],
         ["initial_value", ["line1", "line2", "line3"]]
     ])
-    def test_add_line_adds_line_to_content(self, initial_value: str, lines: list[str]):
+    def test_add_lines_adds_lines_to_content(self, initial_value: str, lines: list[str]):
         model = ConsoleModel(initial_value)
         model.add_lines(lines)
         self.assertEqual(initial_value + "\n" + "\n".join(lines), model.content)
