@@ -2,7 +2,7 @@ import copy
 from dataclasses import dataclass
 from typeguard import typechecked
 from console_app_tools.model_view_presenter import ConsolePresenter, ConsoleModel
-from console_app_tools.user_input import get_input_of_type_forced, get_input, get_input_of_type, get_input_new
+from console_app_tools.user_input import _get_string, get_input
 from observer_pattern.observer_pattern import Subject, Observer
 
 
@@ -199,7 +199,7 @@ class TicTacToe:
 
     def _take_turn(self, player: Player) -> None:
         try:
-            self._board.place_symbol(get_input_new(prompt=self._input_prompt(player), return_type=int), player.symbol)
+            self._board.place_symbol(get_input(prompt=self._input_prompt(player), return_type=int, condition=lambda x: 1 <= x <= 9), player.symbol)
         except ValueError as err:
             print(err)
             self._take_turn(player)

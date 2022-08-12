@@ -5,31 +5,8 @@ import inspect
 T = TypeVar('T')
 
 
-def get_input_new(prompt: str = "Input: ", return_type: T = str, condition: Callable = None) -> T:
-    value = input(prompt)
-    if return_type is not str:
-        try:
-            value = return_type(value)
-        except TypeError:
-            print(f"Input '{value}' cannot be cast to type {return_type}.")
-            return get_input_new(prompt=prompt, return_type=return_type, condition=condition)
-        except ValueError:
-            print(f"Input '{value}' cannot be cast to type {return_type}.")
-            return get_input_new(prompt=prompt, return_type=return_type, condition=condition)
-        except BaseException as err:
-            raise err
-
-    if condition is not None:
-        if not condition(value):
-            print(
-                f"Input: '{value}' did not meet condition: {inspect.getsource(condition)[inspect.getsource(condition).find('lambda x:') + 9:-3]}.")
-            return get_input_new(prompt=prompt, return_type=return_type, condition=condition)
-
-    return value
-
-
 @typechecked
-def get_input(prompt: str = "Input: ") -> str:
+def _get_string(prompt: str = "Input: ") -> str:
     """Get str input from console
 
     Parameters
@@ -46,85 +23,127 @@ def get_input(prompt: str = "Input: ") -> str:
 
 
 @typechecked
-def get_input_of_type(input_type: T, prompt: str = "Input: ") -> T:
-    """Gets input of type from console
+def _cast_value(value: str, return_type: T) -> T:
+    """Casts str input to given type
 
     Parameters
     ----------
-    input_type
-        The type to convert the users input into
-    prompt
-        The text information to be given to the user when requesting input
+    value
+        Value to be converted to given type
+
+    return_type
+        Expected type to convert value to
 
     Raises
     ------
+    TypeError
+        Value cannot be cast to type return_type
+
     ValueError
-        Failed to cast input to the given type
-    Exception
-        Error raised while getting input
+        Value cannot be cast to type return_type
+
+    BaseException
+        Error raised when trying to cast value to return_type
 
     Returns
     -------
     T
-        Returns the users input in the type given in input_type
+        value cast to return_type
     """
     try:
-        return input_type(get_input(prompt=prompt))
-    except ValueError as err:
-        raise ValueError(f"{type(err)}: raised when converting console input to {input_type}: {err}")
-    except Exception as err:
+        return return_type(value)
+    except TypeError:
+        raise TypeError(f"Input '{value}' cannot be cast to type {return_type}.")
+    except ValueError:
+        raise ValueError(f"Input '{value}' cannot be cast to type {return_type}.")
+    except BaseException as err:
         raise err
 
 
 @typechecked
-def get_input_of_type_forced(input_type: T, prompt: str = "Input: ") -> T:
-    """Gets input of type from console
+def _check_condition(value: str, condition: Callable) -> bool:
+    """Checks the value against the condition.
+
+    Returns true is value meets condition
+    Returns false if value does not meet condition
 
     Parameters
     ----------
-    input_type
-        The type to convert the users input into
-    prompt
-        The text information to be given to the user when requesting input
+    value
+        The value to check
+
+    condition
+        The boolean function to check the value against
 
     Raises
     ------
-    ValueError
-        Failed to cast input to the given type
-    Exception
-        Error raised while getting input
+    BaseException
+        Exception raised when calling condition with value
 
     Returns
     -------
-    T
-        Returns the users input in the type given in input_type
+    bool
+        If value meets condition returns true. If not returns false
     """
     try:
-        return input_type(get_input(prompt=prompt))
-    except ValueError as err:
-        print(f"{type(err)}: raised when converting console input to {input_type}: {err}")
-        return get_input_of_type_forced(input_type, prompt)
-    except Exception as err:
-        raise err
+        return condition(value)
+    except BaseException as err:
+        raise Exception(f"{err}")
 
 
+@typechecked
+def get_input(prompt: str = "Input: ", return_type: T = str, condition: Callable = None) -> T:
+    """Get input from the console
+
+    Method can be given a specific type or condition the input must meet.
+    Method will continue to prompt the user until type and condition are met.
+
+    Parameters
+    ----------
+    prompt
+        Text prompt to present to the user when requesting input
+
+    return_type
+        Expected return type from this method. Method will attempt to cast input to this type
+
+    condition
+        Boolean lambda the input must satisfy to be returned. Condition must be given as lambda
+
+    Raises
+    ------
+    BaseException
+         Exception other than ValueError or TypeError raised failed Casting
+
+    """
+    value = _get_string(prompt=prompt)
+    if return_type is not str:
+        try:
+            value = _cast_value(value=value,return_type=return_type)
+        except TypeError as err:
+            print(f"{err}")
+            return get_input(prompt=prompt, return_type=return_type, condition=condition)
+        except ValueError as err:
+            print(f"{err}")
+            return get_input(prompt=prompt, return_type=return_type, condition=condition)
+        except BaseException as err:
+            raise err
+
+    if condition is not None:
+        if not condition(value):
+            print(
+                f"Input: '{value}' did not meet condition: {inspect.getsource(condition)[inspect.getsource(condition).find('lambda') + 6:-3]}.")
+            return get_input(prompt=prompt, return_type=return_type, condition=condition)
+
+    return value
+
+
+@typechecked
 def get_yes_or_no(prompt: str = "Enter 'y' or 'n': ") -> bool:
-    return get_input_with_condition(prompt, lambda x: x == 'y' or x == 'n').lower() == 'y'
+    """Get a boolean response from console input
 
-
-def get_input_with_condition(prompt: str, condition: Callable) -> str:
-    while True:
-        value = get_input(prompt)
-        if condition(value):
-            return value
-        print(
-            f"Input: {value} did not meet condition: {inspect.getsource(condition)[inspect.getsource(condition).find('lambda x:') + 9:-3]}.")
-
-
-def get_input_of_type_with_condition(input_type: T, prompt: str, condition: Callable) -> T:
-    while True:
-        value = get_input_of_type_forced(input_type, prompt)
-        if condition(value):
-            return value
-        print(
-            f"Input: {value} did not meet condition: {inspect.getsource(condition)[inspect.getsource(condition).find('lambda x:') + 9:-3]}.")
+    Parameters
+    ----------
+    prompt
+        Text prompt to be displayed to the user when requesting input
+    """
+    return get_input(prompt=prompt, condition=lambda x: x == 'y' or x == 'n').lower() == 'y'
