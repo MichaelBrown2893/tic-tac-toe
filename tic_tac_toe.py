@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typeguard import typechecked
 from console_app_tools.model_view_presenter import ConsolePresenter, ConsoleModel
 from console_app_tools.user_input import _get_string, get_input
-from observer_pattern.observer_pattern import Subject, Observer
+from observer_pattern.observer_pattern import Subject, IObserver, ISubject
 
 
 class GameBoard(Subject):
@@ -16,6 +16,7 @@ class GameBoard(Subject):
     _HORIZONTAL_LINE: str = "-----------"
 
     def __init__(self):
+        super().__init__()
         self._observers = []
         self._game_board = copy.deepcopy(self._BLANK_GAME_BOARD)
 
@@ -25,45 +26,6 @@ class GameBoard(Subject):
                           f" {self._game_board[1][0]} | {self._game_board[1][1]} | {self._game_board[1][2]}",
                           self._HORIZONTAL_LINE,
                           f" {self._game_board[2][0]} | {self._game_board[2][1]} | {self._game_board[2][2]}"])
-
-    @typechecked
-    def attach(self, observer: Observer) -> None:
-        """Attaches an observer to this subject
-
-        Parameters
-        ----------
-        observer
-            Class that will observe the change to the state of this subject
-
-        Raises
-        ------
-        TypeError
-            Type for observer argument was not of type Observer
-        """
-        self._observers.append(observer)
-
-    @typechecked
-    def detach(self, observer) -> None:
-        """Removes an observer from this subject
-
-        Parameters
-        ----------
-        observer
-            Class that is observing the change to the state of this subject
-
-        Raises
-        ------
-        TypeError
-            Type for observer argument was not of type Observer
-        """
-        self._observers.remove(observer)
-
-    def notify(self) -> None:
-        """
-        Trigger an update in each subscriber.
-        """
-        for observer in self._observers:
-            observer.update(self)
 
     @staticmethod
     def _cell_number_to_2d(cell_number: int) -> (int, int):
@@ -131,7 +93,7 @@ class GameBoard(Subject):
         return True
 
 
-class GameConsoleModel(ConsoleModel, Observer):
+class GameConsoleModel(ConsoleModel, IObserver):
     TITLE = """
  _____  _                _____                       _____            
 |_   _|(_)              |_   _|                     |_   _|             
@@ -153,7 +115,7 @@ Get three in a row to win!
     def __init__(self, presenter: ConsolePresenter = ConsolePresenter()):
         super(GameConsoleModel, self).__init__(observer=presenter)
 
-    def update(self, subject: Subject) -> None:
+    def update(self, subject: ISubject) -> None:
         self.clear_content()
         self.add_lines([
             self.TITLE,

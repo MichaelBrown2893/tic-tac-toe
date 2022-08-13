@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 from typeguard import typechecked
-from observer_pattern.observer_pattern import Observer, Subject
+from observer_pattern.observer_pattern import IObserver, Subject
 import os
 
 
-class ConsolePresenter(Observer):
+class ConsolePresenter(IObserver):
     def update(self, subject: ConsoleModel) -> None:
         """Updates the output when the model state has changed"""
         self.set_output(subject.content)
@@ -87,51 +87,10 @@ class ConsolePresenter(Observer):
 class ConsoleModel(Subject):
     """Model for the text content to be displayed in the console"""
 
-    _content = ""
-    _observers = []
-
-    def __init__(self, content: str = "", observer: Observer = ConsolePresenter()) -> None:
+    def __init__(self, content: str = "", observer: IObserver = ConsolePresenter()) -> None:
+        super().__init__()
         self.attach(observer)
         self._content = content
-
-    @typechecked
-    def attach(self, observer: Observer) -> None:
-        """Attaches an observer to this subject
-
-        Parameters
-        ----------
-        observer
-            Class that will observe the change to the state of this subject
-
-        Raises
-        ------
-        TypeError
-            Type for observer argument was not of type Observer
-        """
-        self._observers.append(observer)
-
-    @typechecked
-    def detach(self, observer) -> None:
-        """Removes an observer from this subject
-
-        Parameters
-        ----------
-        observer
-            Class that is observing the change to the state of this subject
-
-        Raises
-        ------
-        TypeError
-            Type for observer argument was not of type Observer
-        """
-        self._observers.remove(observer)
-
-    def notify(self) -> None:
-        """
-        Trigger an update in each subscriber.
-        """
-        for observer in self._observers:
-            observer.update(self)
 
     @property
     def content(self) -> str:

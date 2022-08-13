@@ -107,7 +107,7 @@ class ConsoleModelTests(unittest.TestCase):
     # endregion
 
 
-class ConsoleViewTests(unittest.TestCase):
+class ConsolePresenterTests(unittest.TestCase):
 
     # region add_line tests
     @parameterized.expand([
@@ -116,13 +116,13 @@ class ConsoleViewTests(unittest.TestCase):
         [False], [True], [None]
     ])
     def test_add_line_wrong_type_raises(self, value: str):
-        view = ConsoleView()
-        type_check_raises(self, view.add_line, value, error_type=TypeError)
+        presenter = ConsolePresenter()
+        type_check_raises(self, presenter.add_line, value, error_type=TypeError)
 
     @parameterized.expand([["Test string"]])
     def test_add_line_correct_type_does_not_raise(self, value: str):
-        view = ConsoleView()
-        type_check_doesnt_raise(self, view.add_line, value)
+        presenter = ConsolePresenter()
+        type_check_doesnt_raise(self, presenter.add_line, value)
 
     # endregion
 
@@ -133,12 +133,12 @@ class ConsoleViewTests(unittest.TestCase):
         [False], [True], [None]
     ])
     def test_add_lines_wrong_type_raises(self, value: list[str]):
-        view = ConsoleView()
-        type_check_raises(self, view.add_lines, value, error_type=TypeError)
+        presenter = ConsolePresenter()
+        type_check_raises(self, presenter.add_lines, value, error_type=TypeError)
 
     @parameterized.expand([[["Test string 1", "Test string 2"]]])
     def test_add_lines_correct_type_does_not_raise(self, value: list[str]):
-        view = ConsoleView()
+        view = ConsolePresenter()
         type_check_doesnt_raise(self, view.add_lines, value)
     # endregion
 
@@ -149,15 +149,15 @@ class ConsoleViewTests(unittest.TestCase):
         [False], [True], [None]
     ])
     def test_set_output_lines_wrong_type_raises(self, value: list[str]):
-        view = ConsoleView()
-        type_check_raises(self, view.set_output, value, error_type=TypeError)
+        presenter = ConsolePresenter()
+        type_check_raises(self, presenter.set_output, value, error_type=TypeError)
 
     @parameterized.expand([
         ["Test string 1"]
     ])
     def test_set_output_correct_type_does_not_raise(self, value: list[str]):
-        view = ConsoleView()
-        type_check_doesnt_raise(self, view.set_output, value)
+        presenter = ConsolePresenter()
+        type_check_doesnt_raise(self, presenter.set_output, value)
     # endregion
 
     # region set_output_from_list tests
@@ -167,15 +167,15 @@ class ConsoleViewTests(unittest.TestCase):
         [False], [True], [None]
     ])
     def test_set_output_from_list_wrong_type_raises(self, value: list[str]):
-        view = ConsoleView()
-        type_check_raises(self, view.set_output_from_list, value, error_type=TypeError)
+        presenter = ConsolePresenter()
+        type_check_raises(self, presenter.set_output_from_list, value, error_type=TypeError)
 
     @parameterized.expand([
         [["Test string 1", "Test string 2"]]
     ])
     def test_set_output_from_list_correct_type_does_not_raise(self, value: list[str]):
-        view = ConsoleView()
-        type_check_doesnt_raise(self, view.set_output_from_list, value)
+        presenter = ConsolePresenter()
+        type_check_doesnt_raise(self, presenter.set_output_from_list, value)
 
     # endregion
 
