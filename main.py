@@ -1,5 +1,5 @@
 from tic_tac_toe import *
-from console_app_tools import user_input
+from console_app_tools.Input import user_input
 
 
 def tic_tac_toe():

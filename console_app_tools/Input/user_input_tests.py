@@ -1,10 +1,9 @@
 import unittest
 from typing import TypeVar, Callable
-from unittest import mock
 from parameterized import parameterized
 from unittest.mock import *
 
-from console_app_tools import user_input
+from console_app_tools.Input import user_input
 
 T = TypeVar('T')
 

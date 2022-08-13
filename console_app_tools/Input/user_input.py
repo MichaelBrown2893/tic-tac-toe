@@ -6,7 +6,7 @@ T = TypeVar('T')
 
 
 @typechecked
-def _get_string(prompt: str = "Input: ") -> str:
+def _get_string(prompt: str = "Inputs: ") -> str:
     """Get str input from console
 
     Wrapped for unit testing in other methods
@@ -55,9 +55,9 @@ def _cast_value(value: str, return_type: T) -> T:
     try:
         return return_type(value)
     except TypeError:
-        raise TypeError(f"Input '{value}' cannot be cast to type {return_type}.")
+        raise TypeError(f"Inputs '{value}' cannot be cast to type {return_type}.")
     except ValueError:
-        raise ValueError(f"Input '{value}' cannot be cast to type {return_type}.")
+        raise ValueError(f"Inputs '{value}' cannot be cast to type {return_type}.")
     except BaseException as err:
         raise err
 
@@ -94,7 +94,7 @@ def _check_condition(value: T, condition: Callable) -> bool:
 
 
 @typechecked
-def get_input(prompt: str = "Input: ", return_type: T = str, condition: Callable = None) -> T:
+def get_input(prompt: str = "Inputs: ", return_type: T = str, condition: Callable = None) -> T:
     """Get input from the console
 
     Method can be given a specific type or condition the input must meet.
@@ -120,7 +120,7 @@ def get_input(prompt: str = "Input: ", return_type: T = str, condition: Callable
     Returns
     -------
     T
-        Input from the console cast if provided and tested against a condition if provided
+        Inputs from the console cast if provided and tested against a condition if provided
     """
     value = _get_string(prompt=prompt)
     if return_type is not str:
@@ -138,7 +138,7 @@ def get_input(prompt: str = "Input: ", return_type: T = str, condition: Callable
     if condition is not None:
         if not condition(value):
             print(
-                f"Input: '{value}' did not meet condition: {inspect.getsource(condition)[inspect.getsource(condition).find('lambda') + 6:-3]}.")
+                f"Inputs: '{value}' did not meet condition: {inspect.getsource(condition)[inspect.getsource(condition).find('lambda') + 6:-3]}.")
             return get_input(prompt=prompt, return_type=return_type, condition=condition)
 
     return value

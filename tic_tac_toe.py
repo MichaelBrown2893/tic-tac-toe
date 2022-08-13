@@ -1,8 +1,7 @@
 import copy
 from dataclasses import dataclass
-from typeguard import typechecked
 from console_app_tools.model_view_presenter import ConsolePresenter, ConsoleModel
-from console_app_tools.user_input import _get_string, get_input
+from console_app_tools.Input.user_input import get_input
 from observer_pattern.observer_pattern import Subject, IObserver, ISubject
 
 
