@@ -9,6 +9,8 @@ T = TypeVar('T')
 def _get_string(prompt: str = "Input: ") -> str:
     """Get str input from console
 
+    Wrapped for unit testing in other methods
+
     Parameters
     ----------
     prompt
@@ -61,7 +63,7 @@ def _cast_value(value: str, return_type: T) -> T:
 
 
 @typechecked
-def _check_condition(value: str, condition: Callable) -> bool:
+def _check_condition(value: T, condition: Callable) -> bool:
     """Checks the value against the condition.
 
     Returns true is value meets condition
@@ -114,11 +116,16 @@ def get_input(prompt: str = "Input: ", return_type: T = str, condition: Callable
     BaseException
          Exception other than ValueError or TypeError raised failed Casting
 
+
+    Returns
+    -------
+    T
+        Input from the console cast if provided and tested against a condition if provided
     """
     value = _get_string(prompt=prompt)
     if return_type is not str:
         try:
-            value = _cast_value(value=value,return_type=return_type)
+            value = _cast_value(value=value, return_type=return_type)
         except TypeError as err:
             print(f"{err}")
             return get_input(prompt=prompt, return_type=return_type, condition=condition)
@@ -145,5 +152,10 @@ def get_yes_or_no(prompt: str = "Enter 'y' or 'n': ") -> bool:
     ----------
     prompt
         Text prompt to be displayed to the user when requesting input
+
+    Returns
+    -------
+    bool
+        True if user input y False if user input n
     """
-    return get_input(prompt=prompt, condition=lambda x: x == 'y' or x == 'n').lower() == 'y'
+    return get_input(prompt=prompt, condition=lambda x: x.lower() == 'y' or x.lower() == 'n').lower() == 'y'

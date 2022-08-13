@@ -6,86 +6,7 @@ from observer_pattern.observer_pattern import Observer, Subject
 import os
 
 
-class ConsoleView:
-    """Console view for MVP pattern"""
-
-    @typechecked
-    def add_line(self, line: str):
-        """Adds the provided line to the console output
-
-        Parameters
-        ----------
-        line
-            The line to be added to the console output
-
-        Raises
-        ------
-        TypeError
-            The argument given for line was not of type str
-        """
-        print(line)
-
-    @typechecked
-    def add_lines(self, lines: list[str]):
-        """Adds multiple lines to the console output
-
-        Parameters
-        ----------
-        lines
-            The lines to be added to the console output
-
-        Raises
-        ------
-        TypeError
-            The argument given for lines was not of type list[str]
-        """
-        for line in lines:
-            self.add_line(line)
-
-    @staticmethod
-    def clear():
-        """Clears the console of all text"""
-        os.system('cls' if os.name == 'nt' else 'clear')
-
-    @typechecked()
-    def set_output_from_list(self, output: list[str]):
-        """Set the console output to the content provided
-
-        Parameters
-        ----------
-        output
-            The content to be displayed on the console
-
-        Raises
-        ------
-        TypeError
-            The argument given for line was not of type list[str]
-        """
-        self.clear()
-        self.add_lines(output)
-
-    @typechecked
-    def set_output(self, output: str):
-        """Set the console output to the content provided
-
-        Parameters
-        ----------
-        output
-            The content to be displayed on the console
-
-        Raises
-        ------
-        TypeError
-            The argument given for line was not of type str
-        """
-        self.clear()
-        self.add_line(output)
-
-
 class ConsolePresenter(Observer):
-    def __init__(self, view: ConsoleView = ConsoleView()) -> None:
-        self._view = view
-
     def update(self, subject: ConsoleModel) -> None:
         """Updates the output when the model state has changed"""
         self.set_output(subject.content)
@@ -104,7 +25,7 @@ class ConsolePresenter(Observer):
         TypeError
             The argument given for line was not of type str
         """
-        self._view.add_line(line)
+        print(line)
 
     @typechecked()
     def add_lines(self, lines: list[str]) -> None:
@@ -120,15 +41,16 @@ class ConsolePresenter(Observer):
         TypeError
             The argument given for lines was not of type list[str]
         """
-        self._view.add_lines(lines)
+        for line in lines:
+            self.add_line(line)
 
     @typechecked()
-    def set_output(self, line: str) -> None:
+    def set_output(self, output: str) -> None:
         """Set the console output to the content provided
 
         Parameters
         ----------
-        line
+        output
             The content to be displayed on the console
 
         Raises
@@ -136,15 +58,16 @@ class ConsolePresenter(Observer):
         TypeError
             The argument given for line was not of type str
         """
-        self._view.set_output(line)
+        self.clear()
+        self.add_line(output)
 
     @typechecked()
-    def set_output_from_list(self, lines: list[str]) -> None:
+    def set_output_from_list(self, output: list[str]) -> None:
         """Set the console output to the content provided
 
         Parameters
         ----------
-        lines
+        output
             The content to be displayed on the console
 
         Raises
@@ -152,11 +75,13 @@ class ConsolePresenter(Observer):
         TypeError
             The argument given for line was not of type list[str]
         """
-        self._view.set_output_from_list(lines)
+        self.clear()
+        self.add_lines(output)
 
-    def clear(self) -> None:
+    @staticmethod
+    def clear() -> None:
         """Clears the console of all text"""
-        self._view.clear()
+        os.system('cls' if os.name == 'nt' else 'clear')
 
 
 class ConsoleModel(Subject):
