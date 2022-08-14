@@ -1,7 +1,7 @@
 import copy
 from dataclasses import dataclass
 from console_app_tools.model_view_presenter import ConsolePresenter, ConsoleModel
-from console_app_tools.Input.user_input import get_input
+from console_app_tools.Input.input_handler import get_input
 from observer_pattern.observer_pattern import Subject, IObserver, ISubject
 
 

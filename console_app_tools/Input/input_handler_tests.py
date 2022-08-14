@@ -3,7 +3,7 @@ from typing import TypeVar, Callable
 from parameterized import parameterized
 from unittest.mock import *
 
-from console_app_tools.Input import user_input
+from console_app_tools.Input import input_handler
 
 T = TypeVar('T')
 
