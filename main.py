@@ -1,5 +1,5 @@
 from tic_tac_toe import *
-from console_app_tools.Input import input_handler
+from console_app_tools.Input import input_handling
 
 
 def tic_tac_toe():
@@ -7,7 +7,7 @@ def tic_tac_toe():
 
 
 def play_again() -> bool:
-    return user_input.get_yes_or_no("Would you like to play again 'y' or 'n'?: ")
+    return input_handling.get_yes_or_no("Would you like to play again 'y' or 'n'?: ")
 
 
 if __name__ == "__main__":

@@ -3,9 +3,10 @@ from abc import ABC, abstractmethod
 
 from observer_pattern.observer_pattern import Subject
 from typeguard import typechecked
+from console_app_tools.Input.input_handling import get_input
 
 
-class ITextModel(ABC):
+class ITextModel(Subject):
     """Interface for TextModels"""
 
     @property
@@ -36,7 +37,7 @@ class ITextModel(ABC):
         pass
 
 
-class TextModel(ITextModel, Subject):
+class TextModel(ITextModel):
     """Model for text"""
 
     def __init__(self, content: str = ""):
