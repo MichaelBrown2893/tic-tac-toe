@@ -1,4 +1,6 @@
-"""Generic tests for type checking to be used as part of unit tests for other classes and scripts"""
+"""Generic tests for type checking to be used as part of unit tests for other classes and scripts
+
+TODO: Implement tests for instances of classes and properties"""
 
 import unittest
 from typing import Callable
