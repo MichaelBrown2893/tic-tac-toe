@@ -1,5 +1,6 @@
 """Model containing text information"""
 from abc import ABC, abstractmethod
+from typing import TypeVar, Callable
 
 from observer_pattern.observer_pattern import Subject
 from typeguard import typechecked
@@ -107,3 +108,116 @@ class TextModel(ITextModel):
     def clear(self):
         """Set content to empty string"""
         self.content = ""
+
+
+T = TypeVar('T')
+
+
+class IInputTextModel(TextModel):
+    @property
+    @abstractmethod
+    def prompt(self) -> str:
+        """Getter for the prompt portion of the models content"""
+        pass
+
+    @prompt.setter
+    @abstractmethod
+    def prompt(self, value: str):
+        """Setter for the prompt portion of the models content"""
+        pass
+
+    @property
+    @abstractmethod
+    def input_value(self) -> T:
+        """The input value portion of the models content"""
+        pass
+
+    @input_value.setter
+    @abstractmethod
+    def input_value(self, value: T):
+        """Setter for the input value portion of the models content"""
+        pass
+
+
+class InputTextModel(IInputTextModel):
+    """Model extending TextModel which is intended for representing Input()"""
+    def __init__(self, prompt: str, value: T):
+        content = self.create_content_from_prompt_and_value(prompt=prompt, value=value)
+        super().__init__(content)
+        self._prompt = prompt
+        self._input_value = value
+
+    # noinspection GrazieInspection
+    @typechecked
+    def create_content_from_prompt_and_value(self, prompt: str, value: T) -> str:
+        """Constructs a string from prompt and value. Value color will match that from console input
+
+        Parameters
+        ----------
+        prompt
+            String of text that was displayed to the user when prompted for input
+
+        value
+            value input by the user
+
+        Raises
+        ------
+        ValueError
+            The input returned could not be converted to string
+
+        Returns
+        -------
+        str
+            Returns a string of the concatenated prompted and value. value colored to match input()
+        """
+
+        input_green = '\033[92m'
+        endc = '\033[0m'
+
+        try:
+            return f"{prompt} {input_green}{value}{endc}"
+        except ValueError as err:
+            raise ValueError(f"Input: {value} of type: {type(value)} could not be converted to string.")
+
+    @property
+    def prompt(self) -> str:
+        return self._prompt
+
+    @prompt.setter
+    @typechecked
+    def prompt(self, value: str):
+        self._prompt = value
+
+    @property
+    def input_value(self) -> T:
+        return self._input_value
+
+    @input_value.setter
+    @typechecked
+    def input_value(self, value: T):
+        self._input_value = value
+
+
+# noinspection SpellCheckingInspection
+def InputTextModelFactory(prompt: str, expected_input_type: T = str, condition: Callable = None) -> TextModel:
+    """Factory that will construct TextModels created from console input
+
+    Parameters
+    ----------
+    prompt
+        String of text to be displayed to the user when prompted for input
+
+    expected_input_type
+        The type expected to be returned by the input.
+        This will be converted back to str but is neccesary for checking conditions
+
+    condition
+        boolean lambda function for the condition the input must meet to be accepted
+
+    Returns
+    -------
+    TextModel
+        Returns a TextModel representing the console input used to construct a text model
+    """
+    value = get_input(prompt=prompt, return_type=expected_input_type, condition=condition)
+    return InputTextModel(prompt=prompt, value=value)
